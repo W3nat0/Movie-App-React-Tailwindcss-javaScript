@@ -75,31 +75,28 @@ const Genre = () => {
       <h2 className="text-2xl mb-4 flex items-end">
         {genreName} <IoIosArrowForward />
       </h2>
-      <div className="flex flex-wrap gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {movies.map((movie) => (
-          <div
-            key={movie.id}
-            className="relative rounded-lg flex-1 min-w-[300px] group"
-          >
+          <div key={movie.id} className="relative rounded-lg group">
             <img
               src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
               alt={movie.title}
-              className="w-[80%] h-auto object-cover rounded-md"
+              className="w-full h-auto object-cover rounded-md"
             />
-            <div className="absolute inset-0 w-[80%] bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-row items-center justify-center absolute top-2 left-5 gap-2">
+            <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
+              <div className="flex justify-between w-full">
+                <div className="flex items-center gap-2">
                   <FaStar className="text-yellow-500" />
                   {movie.vote_average}
                 </div>
-                <FaRegBookmark className="absolute right-3 cursor-pointer text-2xl" />
+                <FaRegBookmark className="cursor-pointer text-2xl" />
               </div>
-              <div className="flex flex-col items-center absolute bottom-4 gap-2">
+              <div className="flex flex-col items-center gap-2">
                 <p className="text-white text-center text-lg">{movie.title}</p>
                 <p className="text-white text-center text-lg">
                   {movie.release_date}
                 </p>
-                <button className="w-[100px] flex flex-row items-center rounded-[10px] bg-red-600 p-2">
+                <button className="flex items-center rounded-lg bg-red-600 p-2">
                   <RxTriangleRight className="text-2xl" /> Trailer
                 </button>
               </div>

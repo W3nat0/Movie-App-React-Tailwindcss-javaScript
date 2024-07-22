@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  FaHome,
-  FaTv,
-  FaStream,
-  FaSearch,
-  FaRegBookmark,
-} from "react-icons/fa";
+import { FaHome, FaStream, FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Dropdown from "../Dropdown";
+import { MdOutlineDataSaverOn } from "react-icons/md";
 
 export const items = [
   { id: 28, name: "Action", href: "/genre/28" },
@@ -29,64 +24,55 @@ export const items = [
 const Header = () => {
   return (
     <header className="bg-zinc-900 text-white">
-      <div className="w-full mx-auto px-4 py-4 flex justify-between items-center">
-        <div className="w-full flex items-center flex-row gap-5">
+      <div className="container mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center">
+        <div className="flex items-center gap-5 mb-4 lg:mb-0 w-full lg:w-auto">
           <img
             src={`https://asset.brandfetch.io/idjAvp-xz4/idbJNPrPxh.png`}
             alt="Plex"
-            className="w-[10%]"
+            className="w-24 md:w-32 lg:w-40"
           />
-          <form className="relative">
+          <form className="relative flex-grow lg:flex-grow-0">
             <input
               type="text"
               placeholder="Search"
-              className="bg-zinc-800 text-white min-w-full w-[500px] rounded-full pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="bg-zinc-800 text-white w-full lg:w-80 xl:w-96 rounded-full pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
             <FaSearch className="absolute right-4 top-3 text-gray-400" />
           </form>
-          <ul className="flex flex-row gap-6 items-center font-mono">
-            <li>
-              <Link to="/" className="hover:text-yellow-500 flex items-center">
-                <FaHome className="mr-2" /> Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/live-tv"
-                className="hover:text-yellow-500 flex items-center"
-              >
-                {" "}
-                <FaTv className="mr-2" /> Live TV
-              </Link>
-            </li>
-            <li>
-              <Dropdown
-                title={
-                  <span className="flex items-center hover:text-yellow-500 ">
-                    <FaStream className="mr-2" /> Menu
-                  </span>
-                }
-                items={items}
-              />
-            </li>
-            <li>
-              <Link
-                to="/discover"
-                className="hover:text-yellow-500 flex items-center"
-              >
-                Discover
-              </Link>
-            </li>
-          </ul>
         </div>
-
-        <div className="w-1/6 flex flex-row items-center gap-3">
-          <Link to="/saved">
-            <FaRegBookmark className="text-2xl hover:text-yellow-500" />
-          </Link>
+        <ul className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-center font-mono mb-4 lg:mb-0 w-full lg:w-auto">
+          <li>
+            <Link
+              to="/"
+              className="hover:text-yellow-500 flex text-xl items-center"
+            >
+              <FaHome className="mr-2" /> Home
+            </Link>
+          </li>
+          <li>
+            <Dropdown
+              title={
+                <span className="flex items-center text-xl hover:text-yellow-500">
+                  <FaStream className="mr-2" /> Menu
+                </span>
+              }
+              items={items}
+            />
+          </li>
+          <li>
+            <Link
+              to="/saved"
+              className="flex flex-row gap-2 items-center text-xl hover:text-yellow-500"
+            >
+              <MdOutlineDataSaverOn />
+              <span>Save</span>
+            </Link>
+          </li>
+        </ul>
+        <div className="flex items-center gap-3 w-full lg:w-auto">
           <div className="flex gap-3">
-            <button className="text-white border-r-2 p-2.5">Login</button>
-            <button className="text-white bg-yellow-500  py-2 px-4 rounded-[15px]">
+            <button className="text-white border-r-2 pr-2.5">Login</button>
+            <button className="text-white bg-yellow-500 py-2 px-4 rounded-full">
               Sign In
             </button>
           </div>

@@ -5,10 +5,10 @@ const Footer = () => {
   return (
     <footer className="bg-zinc-950 text-white">
       <div className="container mx-auto px-4 py-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <h5 className="text-yellow-500 font-bold mb-4">Company</h5>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 <Link to="/about" className="hover:text-yellow-500">
                   About
@@ -33,7 +33,7 @@ const Footer = () => {
           </div>
           <div>
             <h5 className="text-yellow-500 font-bold mb-4">Plex Pass</h5>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 <Link to="/go-premium" className="hover:text-yellow-500">
                   Go Premium
@@ -53,7 +53,7 @@ const Footer = () => {
           </div>
           <div>
             <h5 className="text-yellow-500 font-bold mb-4">Downloads</h5>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 <Link to="/media-server" className="hover:text-yellow-500">
                   Plex Media Server
@@ -73,7 +73,7 @@ const Footer = () => {
           </div>
           <div>
             <h5 className="text-yellow-500 font-bold mb-4">Support</h5>
-            <ul>
+            <ul className="space-y-2">
               <li>
                 <Link to="/finding-help" className="hover:text-yellow-500">
                   Finding Help

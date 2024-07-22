@@ -19,7 +19,7 @@ const Dropdown = ({ title, items }) => {
       </div>
 
       <div
-        className={`origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg z-10 ring-1 ring-black ring-opacity-5 transition-all duration-500 ${
+        className={`origin-top-left absolute left-0 w-56 rounded-md shadow-lg z-10 ring-1 ring-black ring-opacity-5 transition-all duration-500 ${
           open
             ? "opacity-100 scale-100"
             : "opacity-0 scale-95 pointer-events-none"

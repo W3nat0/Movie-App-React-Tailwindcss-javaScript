@@ -71,7 +71,7 @@ const MovieInfo = () => {
           <img
             src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
             alt={movie.title}
-            className="w-full lg:w-1/3 rounded-lg"
+            className="w-full h-[50%] lg:w-1/3 rounded-lg"
           />
           <div className="flex flex-col gap-10 lg:w-3/5">
             <h1 className="text-4xl font-bold">{movie.title}</h1>

@@ -70,11 +70,16 @@ const Header = () => {
           </li>
         </ul>
         <div className="flex justify-center items-center gap-3 w-full lg:w-auto">
-          <div className="flex gap-3">
-            <button className="text-white border-r-2 pr-2.5">Login</button>
-            <button className="text-white bg-yellow-500 py-2 px-4 rounded-full">
+          <div className="flex items-center gap-3">
+            <Link to="/login" className="text-white border-r-2 pr-3">
+              Login
+            </Link>
+            <Link
+              to="/sign-in"
+              className="text-white bg-yellow-500 py-2 px-4 rounded-full"
+            >
               Sign In
-            </button>
+            </Link>
           </div>
         </div>
       </div>

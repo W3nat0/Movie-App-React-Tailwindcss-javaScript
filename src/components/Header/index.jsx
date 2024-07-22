@@ -23,7 +23,7 @@ export const items = [
 
 const Header = () => {
   return (
-    <header className="bg-zinc-900 text-white">
+    <header className="bg-zinc-900 text-white font-lato">
       <div className="container mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center">
         <div className="flex items-center gap-5 mb-4 lg:mb-0 w-full lg:w-auto">
           <img
@@ -53,7 +53,7 @@ const Header = () => {
             <Dropdown
               title={
                 <span className="flex items-center text-xl hover:text-yellow-500">
-                  <FaStream className="mr-2" /> Menu
+                  <FaStream className="mr-2" /> Movie
                 </span>
               }
               items={items}

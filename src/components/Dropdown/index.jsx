@@ -35,7 +35,7 @@ const Dropdown = ({ title, items }) => {
             <a
               key={index}
               href={item.href}
-              className="block px-4 py-2 text-black hover:text-yellow-500"
+              className="block px-4 py-2 text-black font-lato hover:text-yellow-500"
               role="menuitem"
             >
               {item.name}

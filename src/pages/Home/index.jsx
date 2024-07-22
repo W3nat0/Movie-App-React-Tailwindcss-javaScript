@@ -4,9 +4,9 @@ import {
   IoIosArrowDropleft,
   IoIosArrowDropright,
 } from "react-icons/io";
-import { RxTriangleRight } from "react-icons/rx";
 import { FaStar, FaRegBookmark } from "react-icons/fa";
 import { getData } from "../../api/movies";
+import { useNavigate } from "react-router";
 
 const Home = () => {
   const [topRated, setTopRated] = useState(null);
@@ -22,6 +22,7 @@ const Home = () => {
     upComing: { start: 0, end: 5 },
   });
 
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -58,22 +59,23 @@ const Home = () => {
     const { start, end } = showMore[type];
     const displayData = data.results.slice(start, end);
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
         {displayData.map((items) => (
           <div
             key={items.id}
-            className="relative rounded-lg flex-1 min-w-[300px] group"
+            className="relative rounded-2xl flex-1 min-w-[50px] group"
           >
+            {console.log(items)}
             <img
               src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${items.poster_path}`}
               alt={items.title}
-              className="w-full h-auto object-cover rounded-md"
+              className="w-full h-auto object-cover rounded-xl"
             />
-            <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
+            <div className="absolute inset-0 rounded-xl bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
               <div className="flex flex-row justify-between w-full">
                 <div className="flex flex-row items-center justify-center gap-2">
                   <FaStar className="text-yellow-500" />
-                  {items.vote_average}
+                  {items.vote_average.toFixed(1)}
                 </div>
                 <FaRegBookmark className="cursor-pointer text-2xl" />
               </div>
@@ -82,8 +84,11 @@ const Home = () => {
                 <p className="text-white text-center text-lg">
                   {items.release_date}
                 </p>
-                <button className="flex items-center rounded-lg bg-red-600 p-2">
-                  <RxTriangleRight className="text-2xl" /> Trailer
+                <button
+                  onClick={() => navigate(`/movie/${items.id}`)}
+                  className="flex items-center rounded-lg bg-red-600 p-2"
+                >
+                  More
                 </button>
               </div>
             </div>

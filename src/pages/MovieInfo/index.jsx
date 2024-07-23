@@ -4,6 +4,8 @@ import { getData } from "../../api/movies";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import VideoShow from "../../components/VideoShow";
 import Loader from "../../components/Loader";
+import Similars from "../../components/Similars";
+import { IoClose } from "react-icons/io5";
 
 const MovieInfo = () => {
   const { id } = useParams();
@@ -14,6 +16,7 @@ const MovieInfo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [startIndex, setStartIndex] = useState(0);
+  const [isVideoVisible, setIsVideoVisible] = useState(false);
 
   const itemsPerPage = 4;
 
@@ -37,17 +40,28 @@ const MovieInfo = () => {
           (video) => video.site === "YouTube"
         );
         setVideos(youtubeVideos);
-        setSelectedVideo(youtubeVideos.length > 0 ? youtubeVideos[0].key : "");
+        setSelectedVideo(youtubeVideos.length > 0 ? youtubeVideos[1].key : "");
 
         setLoading(false);
       } catch (err) {
-        setError("Failed to load movie data.");
         setLoading(false);
       }
     };
 
     fetchMovie();
   }, [id]);
+
+  useEffect(() => {
+    if (isVideoVisible) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isVideoVisible]);
 
   const handleNavigation = (direction) => {
     if (direction === "next") {
@@ -57,6 +71,10 @@ const MovieInfo = () => {
     } else if (direction === "prev") {
       setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
     }
+  };
+
+  const toggleVideoVisibility = () => {
+    setIsVideoVisible(!isVideoVisible);
   };
 
   if (loading) return <div>{<Loader />}</div>;
@@ -86,8 +104,40 @@ const MovieInfo = () => {
               {movie.vote_average.toFixed(1)}
             </p>
 
+            {/* Video Player Toggle Button */}
+            <button
+              onClick={toggleVideoVisibility}
+              className="bg-red-600 py-3 px-6 rounded-md"
+              disabled={videos.length === 0} // Disable if no videos
+            >
+              {videos.length > 0
+                ? isVideoVisible
+                  ? "Hide Trailer"
+                  : "Watch Trailer"
+                : "No Trailer Available"}
+            </button>
+
             {/* Video Player */}
-            <VideoShow selectedVideo={selectedVideo} />
+            <div className="z-[999] relative">
+              {isVideoVisible && videos.length > 0 && (
+                <div className="fixed inset-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center">
+                  <div className="w-[80%] h-[80%]">
+                    <button
+                      onClick={toggleVideoVisibility}
+                      className="absolute top-0 right-0 z-20 text-white text-5xl p-4"
+                    >
+                      <IoClose />
+                    </button>
+                    <VideoShow selectedVideo={selectedVideo} />
+                  </div>
+                </div>
+              )}
+              {isVideoVisible && videos.length === 0 && (
+                <div className="fixed inset-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center text-white text-xl">
+                  No Trailer Available
+                </div>
+              )}
+            </div>
 
             {/* Actor Information */}
             <div className="mt-12">
@@ -121,6 +171,10 @@ const MovieInfo = () => {
                     <p className="text-center">{actor.character}</p>
                   </div>
                 ))}
+              </div>
+              {/* Similar Movies Section */}
+              <div>
+                <Similars />
               </div>
             </div>
           </div>

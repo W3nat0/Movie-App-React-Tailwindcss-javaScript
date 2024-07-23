@@ -6,10 +6,10 @@ const VideoShow = ({ selectedVideo }) => {
   }
 
   return (
-    <div className="mt-6 relative">
+    <div className="mt-6 relative flex justify-center">
       <iframe
-        width="100%"
-        height="450px"
+        width="90%"
+        height="750px"
         src={`https://www.youtube.com/embed/${selectedVideo}`}
         title="Trailer"
         frameBorder="0"

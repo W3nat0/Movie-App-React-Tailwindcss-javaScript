@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaStar, FaRegBookmark } from "react-icons/fa";
 import {
   IoIosArrowForward,
   IoIosArrowDropleft,
   IoIosArrowDropright,
 } from "react-icons/io";
-import { FaStar, FaRegBookmark } from "react-icons/fa";
 import { getData } from "../../api/movies";
-import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartItems, addCart } from "../../provider/store/cartSlice";
+import Loader from "../../components/Loader";
 
 const Home = () => {
-  const [topRated, setTopRated] = useState(null);
-  const [popularShows, setPopularShows] = useState(null);
-  const [nowPlayingShows, setNowPlayingShows] = useState(null);
-  const [upComing, setUpComing] = useState(null);
+  const [topRated, setTopRated] = useState([]);
+  const [popularShows, setPopularShows] = useState([]);
+  const [nowPlayingShows, setNowPlayingShows] = useState([]);
+  const [upComing, setUpComing] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showMore, setShowMore] = useState({
@@ -22,70 +25,88 @@ const Home = () => {
     upComing: { start: 0, end: 5 },
   });
 
+  const cartItems = useSelector(getCartItems);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const popularShowsData = await getData(
-          `${process.env.REACT_APP_MOVIE_HOST}/movie/popular`
-        );
-        const nowPlayingShowsData = await getData(
-          `${process.env.REACT_APP_MOVIE_HOST}/movie/now_playing`
-        );
-        const topRatedData = await getData(
-          `${process.env.REACT_APP_MOVIE_HOST}/movie/top_rated`
-        );
-        const upComingData = await getData(
-          `${process.env.REACT_APP_MOVIE_HOST}/movie/upcoming`
-        );
-        setPopularShows(popularShowsData);
-        setNowPlayingShows(nowPlayingShowsData);
-        setTopRated(topRatedData);
-        setUpComing(upComingData);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load data.");
-        setLoading(false);
-      }
-    };
 
-    fetchData();
+  const fetchData = useCallback(async () => {
+    try {
+      const popularShowsData = await getData(
+        `${process.env.REACT_APP_MOVIE_HOST}/movie/popular`
+      );
+      const nowPlayingShowsData = await getData(
+        `${process.env.REACT_APP_MOVIE_HOST}/movie/now_playing`
+      );
+      const topRatedData = await getData(
+        `${process.env.REACT_APP_MOVIE_HOST}/movie/top_rated`
+      );
+      const upComingData = await getData(
+        `${process.env.REACT_APP_MOVIE_HOST}/movie/upcoming`
+      );
+
+      setPopularShows(popularShowsData.results);
+      setNowPlayingShows(nowPlayingShowsData.results);
+      setTopRated(topRatedData.results);
+      setUpComing(upComingData.results);
+
+      setLoading(false);
+    } catch (err) {
+      setError("Failed to load data.");
+      setLoading(false);
+    }
   }, []);
 
-  if (loading) return <div className="text-white">Loading...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const isInCart = (item) =>
+    cartItems.find((cartItem) => cartItem.id === item.id);
+
+  const handleToggleCart = (item) => {
+    if (isInCart(item)) {
+      navigate("/favorit");
+    } else {
+      dispatch(addCart(item));
+    }
+  };
 
   const renderShows = (data, type) => {
     const { start, end } = showMore[type];
-    const displayData = data.results.slice(start, end);
+    const displayData = data.slice(start, end);
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-        {displayData.map((items) => (
+        {displayData.map((item) => (
           <div
-            key={items.id}
+            key={item.id}
             className="relative rounded-2xl flex-1 min-w-[50px] group"
           >
-            {console.log(items)}
             <img
-              src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${items.poster_path}`}
-              alt={items.title}
+              src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${item.poster_path}`}
+              alt={item.title}
               className="w-full h-auto object-cover rounded-xl"
             />
-            <div className="absolute inset-0 rounded-xl bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
-              <div className="flex flex-row justify-between w-full">
-                <div className="flex flex-row items-center justify-center gap-2">
+            <div className="absolute rounded-xl inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
+              <div className="flex justify-between w-full">
+                <div className="flex items-center gap-2">
                   <FaStar className="text-yellow-500" />
-                  {items.vote_average.toFixed(1)}
+                  {item.vote_average.toFixed(1)}
                 </div>
-                <FaRegBookmark className="cursor-pointer text-2xl" />
+                <button onClick={() => handleToggleCart(item)}>
+                  <FaRegBookmark
+                    className={`cursor-pointer text-2xl ${
+                      isInCart(item) ? "text-yellow-500 " : "text-white"
+                    }`}
+                  />
+                </button>
               </div>
               <div className="flex flex-col items-center gap-2">
-                <p className="text-white text-center text-lg">{items.title}</p>
+                <p className="text-white text-center text-lg">{item.title}</p>
                 <p className="text-white text-center text-lg">
-                  {items.release_date}
+                  {item.release_date}
                 </p>
                 <button
-                  onClick={() => navigate(`/movie/${items.id}`)}
+                  onClick={() => navigate(`/movie/${item.id}`)}
                   className="flex items-center rounded-lg bg-red-600 p-2"
                 >
                   More
@@ -100,113 +121,74 @@ const Home = () => {
 
   const handleArrowClick = (type, direction) => {
     setShowMore((prevState) => {
-      const { start, end } = prevState[type];
-      const maxItems =
-        type === "popular"
-          ? popularShows.results.length
-          : type === "topRated"
-          ? topRated.results.length
-          : type === "nowPlaying"
-          ? nowPlayingShows.results.length
-          : upComing.results.length;
-      if (direction === "right" && end < maxItems) {
-        return {
-          ...prevState,
-          [type]: {
-            start: start + 1,
-            end: end + 1,
-          },
-        };
-      } else if (direction === "left" && start > 0) {
-        return {
-          ...prevState,
-          [type]: {
-            start: start - 1,
-            end: end - 1,
-          },
-        };
+      const newState = { ...prevState };
+      const data = {
+        popular: popularShows,
+        topRated: topRated,
+        nowPlaying: nowPlayingShows,
+        upComing: upComing,
+      }[type];
+
+      const currentState = prevState[type];
+      const newStart =
+        direction === "right" ? currentState.start + 5 : currentState.start - 5;
+      const newEnd =
+        direction === "right" ? currentState.end + 5 : currentState.end - 5;
+
+      if (newStart >= 0 && newEnd <= data.length) {
+        newState[type] = { start: newStart, end: newEnd };
       }
-      return prevState;
+
+      return newState;
     });
   };
 
+  if (loading) return <div>{<Loader />}</div>;
+  if (error) return <div className="text-red-500">{error}</div>;
+
   return (
-    <div className="bg-zinc-900 flex flex-col gap-10 text-white p-8 min-h-screen">
-      <section className="mb-12 relative">
-        <button
-          className="absolute top-1/2 left-0 z-10 text-5xl"
-          onClick={() => handleArrowClick("popular", "left")}
-        >
-          <IoIosArrowDropleft />
-        </button>
-        <h2 className="text-2xl mb-4 flex items-center">
-          Popular Shows <IoIosArrowForward />
-        </h2>
-        {popularShows && renderShows(popularShows, "popular")}
-        <button
-          className="absolute top-1/2 z-10 text-5xl right-0"
-          onClick={() => handleArrowClick("popular", "right")}
-        >
-          <IoIosArrowDropright />
-        </button>
-      </section>
-
-      <section className="mb-12 relative">
-        <button
-          className="absolute top-1/2 left-0 z-10 text-5xl"
-          onClick={() => handleArrowClick("topRated", "left")}
-        >
-          <IoIosArrowDropleft />
-        </button>
-        <h2 className="text-2xl mb-4 flex items-center">
-          Top Rated <IoIosArrowForward />
-        </h2>
-        {topRated && renderShows(topRated, "topRated")}
-        <button
-          className="absolute top-1/2 z-10 text-5xl right-0"
-          onClick={() => handleArrowClick("topRated", "right")}
-        >
-          <IoIosArrowDropright />
-        </button>
-      </section>
-
-      <section className="mb-12 relative">
-        <button
-          className="absolute top-1/2 left-0 z-10 text-5xl"
-          onClick={() => handleArrowClick("nowPlaying", "left")}
-        >
-          <IoIosArrowDropleft />
-        </button>
-        <h2 className="text-2xl mb-4 flex items-center">
-          Now Playing <IoIosArrowForward />
-        </h2>
-        {nowPlayingShows && renderShows(nowPlayingShows, "nowPlaying")}
-        <button
-          className="absolute top-1/2 z-10 text-5xl right-0"
-          onClick={() => handleArrowClick("nowPlaying", "right")}
-        >
-          <IoIosArrowDropright />
-        </button>
-      </section>
-
-      <section className="mb-12 relative">
-        <button
-          className="absolute top-1/2 left-0 z-10 text-5xl"
-          onClick={() => handleArrowClick("upComing", "left")}
-        >
-          <IoIosArrowDropleft />
-        </button>
-        <h2 className="text-2xl mb-4 flex items-center">
-          UpComing <IoIosArrowForward />
-        </h2>
-        {upComing && renderShows(upComing, "upComing")}
-        <button
-          className="absolute top-1/2 z-10 text-5xl right-0"
-          onClick={() => handleArrowClick("upComing", "right")}
-        >
-          <IoIosArrowDropright />
-        </button>
-      </section>
+    <div className="bg-zinc-900 text-white p-8 min-h-screen">
+      {[
+        { title: "Popular Shows", data: popularShows, type: "popular" },
+        { title: "Top Rated Shows", data: topRated, type: "topRated" },
+        {
+          title: "Now Playing Shows",
+          data: nowPlayingShows,
+          type: "nowPlaying",
+        },
+        { title: "Upcoming Shows", data: upComing, type: "upComing" },
+      ].map(({ title, data, type }) => (
+        <div key={type} className="mb-12">
+          <h2 className="text-2xl mb-4 flex items-end">
+            {title} <IoIosArrowForward />
+          </h2>
+          {renderShows(data, type)}
+          <div className="flex items-center justify-center gap-4 mt-4 text-5xl">
+            <button
+              className={`arrow-btn ${
+                showMore[type].start === 0
+                  ? "text-gray-500 cursor-not-allowed"
+                  : ""
+              }`}
+              onClick={() => handleArrowClick(type, "left")}
+              disabled={showMore[type].start === 0}
+            >
+              <IoIosArrowDropleft />
+            </button>
+            <button
+              className={`arrow-btn ${
+                showMore[type].end >= data.length
+                  ? "text-gray-500 cursor-not-allowed"
+                  : ""
+              }`}
+              onClick={() => handleArrowClick(type, "right")}
+              disabled={showMore[type].end >= data.length}
+            >
+              <IoIosArrowDropright />
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

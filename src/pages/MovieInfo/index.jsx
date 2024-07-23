@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getData } from "../../api/movies";
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
 import VideoShow from "../../components/VideoShow";
+import Loader from "../../components/Loader";
 
 const MovieInfo = () => {
   const { id } = useParams();
@@ -58,13 +59,13 @@ const MovieInfo = () => {
     }
   };
 
-  if (loading) return <div className="text-white">Loading...</div>;
+  if (loading) return <div>{<Loader />}</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
   const displayedActors = actors.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className="bg-gray-900 text-white p-8 min-h-screen">
+    <div className="bg-zinc-900 text-white p-8 min-h-screen">
       <div className="container mx-auto">
         {/* Movie Details */}
         <div className="flex flex-col lg:flex-row gap-14">
@@ -93,14 +94,14 @@ const MovieInfo = () => {
               <div className="flex items-center relative justify-between">
                 <button
                   onClick={() => handleNavigation("prev")}
-                  className="text-2xl p-2 absolute top-10 left-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
+                  className="text-2xl p-2 cursor-pointer absolute top-10 left-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
                   disabled={startIndex === 0}
                 >
                   <IoIosArrowDropleft />
                 </button>
                 <button
                   onClick={() => handleNavigation("next")}
-                  className="text-2xl p-2 absolute top-10 right-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
+                  className="text-2xl p-2 cursor-pointer absolute top-10 right-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
                   disabled={startIndex + itemsPerPage >= actors.length}
                 >
                   <IoIosArrowDropright />

@@ -1,44 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getData } from "../../api/movies";
 import { FaStar, FaRegBookmark } from "react-icons/fa";
-import { RxTriangleRight } from "react-icons/rx";
 import { IoIosArrowForward } from "react-icons/io";
-import { items } from "../Header";
+import { useDispatch, useSelector } from "react-redux";
+import { getCartItems, addCart } from "../../provider/store/cartSlice";
+import Loader from "../../components/Loader";
+import { items as genreItems } from "../../components/Header"; // Import genre items
 
 const Genre = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [genreName, setGenreName] = useState("");
+  const [genreName, setGenreName] = useState(" ");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [paginationLoading, setPaginationLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      try {
-        const response = await getData(
-          `${process.env.REACT_APP_MOVIE_HOST}/discover/movie?with_genres=${id}&page=${currentPage}`
-        );
-        setMovies(response.results);
-        setTotalPages(response.total_pages);
-        setLoading(false);
-      } catch (err) {
-        setError("Failed to load data.");
-        setLoading(false);
-      }
-    };
+  const cartItems = useSelector(getCartItems);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    fetchMovies();
+  const fetchMovies = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getData(
+        `${process.env.REACT_APP_MOVIE_HOST}/discover/movie?with_genres=${id}&page=${currentPage}`
+      );
+      setMovies(response.results);
+      setTotalPages(response.total_pages);
+    } catch (err) {
+      console.error("Failed to fetch movies:", err);
+      setError("Failed to load data.");
+    } finally {
+      setLoading(false);
+      setPaginationLoading(false);
+    }
   }, [id, currentPage]);
 
   useEffect(() => {
-    const genre = items.find((item) => item.id === parseInt(id));
-    if (genre) {
-      setGenreName(genre.name);
-    }
+    fetchMovies();
+  }, [fetchMovies]);
+
+  useEffect(() => {
+    const genre = genreItems.find((item) => item.id === id);
+    if (genre) setGenreName(genre.name);
   }, [id]);
 
   const handlePageChange = async (direction) => {
@@ -46,54 +53,55 @@ const Genre = () => {
       (direction === "next" && currentPage < totalPages) ||
       (direction === "prev" && currentPage > 1)
     ) {
-      setLoading(true);
-      if (direction === "next") {
-        setCurrentPage((prevPage) => prevPage + 1);
-      } else if (direction === "prev") {
-        setCurrentPage((prevPage) => prevPage - 1);
-      }
-      window.scrollTo({ top: 0, behavior: "smooth" });
-
-      try {
-        const response = await getData(
-          `${process.env.REACT_APP_MOVIE_HOST}/discover/movie?with_genres=${id}&page=${currentPage}`
-        );
-        setMovies(response.results);
-        setTotalPages(response.total_pages);
-      } catch (err) {
-        setError("Failed to load data.");
-      } finally {
-        setLoading(false);
-      }
+      setPaginationLoading(true);
+      const newPage = direction === "next" ? currentPage + 1 : currentPage - 1;
+      setCurrentPage(newPage);
     }
   };
 
-  if (loading) return <div className="text-white">Loading...</div>;
+  const isInCart = (item) =>
+    cartItems.find((cartItem) => cartItem.id === item.id);
+
+  const handleToggleCart = (item) => {
+    if (isInCart(item)) {
+      navigate("/favorit");
+    } else {
+      dispatch(addCart(item));
+    }
+  };
+
+  if (loading) return <div>{<Loader />}</div>;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
     <div className="bg-zinc-900 text-white p-8 min-h-screen">
       <h2 className="text-2xl mb-4 flex items-end">
-        {genreName} <IoIosArrowForward />
+        {genreName || "Loading..."} <IoIosArrowForward />
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
         {movies.map((movie) => (
           <div
             key={movie.id}
-            className=" min-w-[50px] relative rounded-2xl group"
+            className="min-w-[50px] relative rounded-2xl group"
           >
             <img
               src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
               alt={movie.title}
-              className="w-full h-auto object-cover rounded-md"
+              className="w-full h-auto object-cover rounded-xl"
             />
-            <div className="absolute rounded-xll inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
+            <div className="absolute rounded-xl inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
               <div className="flex justify-between w-full">
                 <div className="flex items-center gap-2">
                   <FaStar className="text-yellow-500" />
                   {movie.vote_average.toFixed(1)}
                 </div>
-                <FaRegBookmark className="cursor-pointer text-2xl" />
+                <button onClick={() => handleToggleCart(movie)}>
+                  <FaRegBookmark
+                    className={`cursor-pointer text-2xl ${
+                      isInCart(movie) ? "text-yellow-500 " : "text-white"
+                    }`}
+                  />
+                </button>
               </div>
               <div className="flex flex-col items-center gap-2">
                 <p className="text-white text-center text-lg">{movie.title}</p>
@@ -104,7 +112,7 @@ const Genre = () => {
                   onClick={() => navigate(`/movie/${movie.id}`)}
                   className="flex items-center rounded-lg bg-red-600 p-2"
                 >
-                  <RxTriangleRight className="text-2xl" /> More
+                  More
                 </button>
               </div>
             </div>
@@ -118,7 +126,7 @@ const Genre = () => {
             currentPage === 1 ? "text-gray-500 cursor-not-allowed" : ""
           }`}
           onClick={() => handlePageChange("prev")}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || paginationLoading}
         >
           Back
         </button>
@@ -132,7 +140,7 @@ const Genre = () => {
             currentPage === totalPages ? "text-gray-500 cursor-not-allowed" : ""
           }`}
           onClick={() => handlePageChange("next")}
-          disabled={currentPage === totalPages}
+          disabled={currentPage === totalPages || paginationLoading}
         >
           Next
         </button>

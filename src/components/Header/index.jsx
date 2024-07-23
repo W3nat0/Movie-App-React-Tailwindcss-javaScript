@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaHome, FaStream, FaSearch } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+// icons
+import { FaHome, FaStream, FaSearch } from "react-icons/fa";
 import { MdOutlineDataSaverOn } from "react-icons/md";
+// api
 import { fetchMovies } from "../../api/searchMovie";
 
 export const items = [

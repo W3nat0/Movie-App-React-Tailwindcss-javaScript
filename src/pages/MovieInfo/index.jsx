@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+// api
 import { getData } from "../../api/movies";
+// icons
 import { IoIosArrowDropleft, IoIosArrowDropright } from "react-icons/io";
+import { IoClose } from "react-icons/io5";
+// components
 import VideoShow from "../../components/VideoShow";
 import Loader from "../../components/Loader";
 import Similars from "../../components/Similars";
-import { IoClose } from "react-icons/io5";
 
 const MovieInfo = () => {
   const { id } = useParams();

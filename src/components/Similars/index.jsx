@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+// api
 import { getSimilar } from "../../api/similar";
+// icons
 import { FaStar, FaRegBookmark } from "react-icons/fa";
+// redux
 import { addCart, getCartItems } from "../../provider/store/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+// components
 import Loader from "../Loader";
 
 export default function Similars() {

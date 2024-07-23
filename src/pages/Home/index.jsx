@@ -1,14 +1,18 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+// icons
 import { FaStar, FaRegBookmark } from "react-icons/fa";
 import {
   IoIosArrowForward,
   IoIosArrowDropleft,
   IoIosArrowDropright,
 } from "react-icons/io";
+// api
 import { getData } from "../../api/movies";
+// redux
 import { useDispatch, useSelector } from "react-redux";
 import { getCartItems, addCart } from "../../provider/store/cartSlice";
+// components
 import Loader from "../../components/Loader";
 
 const Home = () => {

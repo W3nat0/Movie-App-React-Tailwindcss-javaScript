@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+// api
 import { fetchMovies } from "../../api/searchMovie";
+// components
 import Loader from "../Loader";
+// icons
 import { FaStar, FaRegBookmark } from "react-icons/fa";
+// redux
 import { useDispatch, useSelector } from "react-redux";
 import { addCart, getCartItems } from "../../provider/store/cartSlice";
 

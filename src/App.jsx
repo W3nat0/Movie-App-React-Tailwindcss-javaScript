@@ -1,16 +1,16 @@
 import React from "react";
 import { Routes, Route, useParams } from "react-router-dom";
+// pages
 import Genre from "./pages/Genre";
 import Home from "./pages/Home";
 import MovieInfo from "./pages/MovieInfo";
 import SignIn from "./pages/SignIn";
 import Login from "./pages/Login";
 import Favorit from "./pages/Favorit";
+// components
 import SearchResults from "./components/SearchResults";
 
 const App = () => {
-  const { query } = useParams();
-
   return (
     <Routes>
       <Route path="/" element={<Home />} />

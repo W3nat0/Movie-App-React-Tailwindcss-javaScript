@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+// api
 import { getData } from "../../api/movies";
+// icons
 import { FaStar, FaRegBookmark } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
+// redux
 import { useDispatch, useSelector } from "react-redux";
 import { getCartItems, addCart } from "../../provider/store/cartSlice";
+// components
 import Loader from "../../components/Loader";
-import { items as genreItems } from "../../components/Header"; // Import genre items
+import { items as genreItems } from "../../components/Header";
 
 const Genre = () => {
   const { id } = useParams();

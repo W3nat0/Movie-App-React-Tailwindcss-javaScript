@@ -1,6 +1,8 @@
 import React from "react";
+// redux
 import { useSelector, useDispatch } from "react-redux";
 import { getCartItems, removeCart } from "../../provider/store/cartSlice";
+// icons
 import { FaStar, FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 

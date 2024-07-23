@@ -79,7 +79,7 @@ const Home = () => {
         {displayData.map((item) => (
           <div
             key={item.id}
-            className="relative rounded-2xl flex-1 min-w-[50px] group"
+            className="relative rounded-2xl flex-1 max-w-[320px] group"
           >
             <img
               src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${item.poster_path}`}
@@ -131,9 +131,9 @@ const Home = () => {
 
       const currentState = prevState[type];
       const newStart =
-        direction === "right" ? currentState.start + 5 : currentState.start - 5;
+        direction === "right" ? currentState.start + 1 : currentState.start - 1;
       const newEnd =
-        direction === "right" ? currentState.end + 5 : currentState.end - 5;
+        direction === "right" ? currentState.end + 1 : currentState.end - 1;
 
       if (newStart >= 0 && newEnd <= data.length) {
         newState[type] = { start: newStart, end: newEnd };

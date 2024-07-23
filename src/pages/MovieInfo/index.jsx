@@ -15,10 +15,8 @@ const MovieInfo = () => {
   const [selectedVideo, setSelectedVideo] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [startIndex, setStartIndex] = useState(0);
   const [isVideoVisible, setIsVideoVisible] = useState(false);
-
-  const itemsPerPage = 4;
+  const [showMore, setShowMore] = useState({ start: 0, end: 4 });
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -37,13 +35,14 @@ const MovieInfo = () => {
           `${process.env.REACT_APP_MOVIE_HOST}/movie/${id}/videos`
         );
         const youtubeVideos = videosData.results.filter(
-          (video) => video.site === "YouTube"
+          (video) => video.site === "YouTube" && video.type === "Trailer"
         );
         setVideos(youtubeVideos);
-        setSelectedVideo(youtubeVideos.length > 0 ? youtubeVideos[1].key : "");
+        setSelectedVideo(youtubeVideos.length > 0 ? youtubeVideos[0].key : "");
 
         setLoading(false);
       } catch (err) {
+        setError("Failed to fetch movie details.");
         setLoading(false);
       }
     };
@@ -64,33 +63,42 @@ const MovieInfo = () => {
   }, [isVideoVisible]);
 
   const handleNavigation = (direction) => {
-    if (direction === "next") {
-      setStartIndex((prevIndex) =>
-        Math.min(prevIndex + itemsPerPage, actors.length - itemsPerPage)
-      );
-    } else if (direction === "prev") {
-      setStartIndex((prevIndex) => Math.max(prevIndex - itemsPerPage, 0));
-    }
+    setShowMore((prevState) => {
+      const { start, end } = prevState;
+      const maxItems = actors.length;
+
+      if (direction === "right" && end < maxItems) {
+        return {
+          start: start + 1,
+          end: end + 1,
+        };
+      } else if (direction === "left" && start > 0) {
+        return {
+          start: start - 1,
+          end: end - 1,
+        };
+      }
+      return prevState;
+    });
   };
 
   const toggleVideoVisibility = () => {
     setIsVideoVisible(!isVideoVisible);
   };
 
-  if (loading) return <div>{<Loader />}</div>;
+  if (loading) return <Loader />;
   if (error) return <div className="text-red-500">{error}</div>;
 
-  const displayedActors = actors.slice(startIndex, startIndex + itemsPerPage);
+  const displayedActors = actors.slice(showMore.start, showMore.end);
 
   return (
     <div className="bg-zinc-900 text-white p-8 min-h-screen">
       <div className="container mx-auto">
-        {/* Movie Details */}
         <div className="flex flex-col lg:flex-row gap-14">
           <img
             src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
             alt={movie.title}
-            className="w-full h-[50%] lg:w-1/3 rounded-lg"
+            className="w-full h-[850px] lg:w-1/3 rounded-lg"
           />
           <div className="flex flex-col gap-10 lg:w-3/5">
             <h1 className="text-4xl font-bold">{movie.title}</h1>
@@ -103,12 +111,10 @@ const MovieInfo = () => {
               <span className="font-bold">Rating:</span>{" "}
               {movie.vote_average.toFixed(1)}
             </p>
-
-            {/* Video Player Toggle Button */}
             <button
               onClick={toggleVideoVisibility}
               className="bg-red-600 py-3 px-6 rounded-md"
-              disabled={videos.length === 0} // Disable if no videos
+              disabled={videos.length === 0}
             >
               {videos.length > 0
                 ? isVideoVisible
@@ -116,11 +122,9 @@ const MovieInfo = () => {
                   : "Watch Trailer"
                 : "No Trailer Available"}
             </button>
-
-            {/* Video Player */}
-            <div className="z-[999] relative">
+            <div className="relative">
               {isVideoVisible && videos.length > 0 && (
-                <div className="fixed inset-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center">
+                <div className="fixed inset-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center z-50">
                   <div className="w-[80%] h-[80%]">
                     <button
                       onClick={toggleVideoVisibility}
@@ -132,27 +136,19 @@ const MovieInfo = () => {
                   </div>
                 </div>
               )}
-              {isVideoVisible && videos.length === 0 && (
-                <div className="fixed inset-0 w-full h-full bg-black bg-opacity-70 flex items-center justify-center text-white text-xl">
-                  No Trailer Available
-                </div>
-              )}
             </div>
 
-            {/* Actor Information */}
             <div className="mt-12">
               <div className="flex items-center relative justify-between">
                 <button
-                  onClick={() => handleNavigation("prev")}
+                  onClick={() => handleNavigation("left")}
                   className="text-2xl p-2 cursor-pointer absolute top-10 left-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
-                  disabled={startIndex === 0}
                 >
                   <IoIosArrowDropleft />
                 </button>
                 <button
-                  onClick={() => handleNavigation("next")}
+                  onClick={() => handleNavigation("right")}
                   className="text-2xl p-2 cursor-pointer absolute top-10 right-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
-                  disabled={startIndex + itemsPerPage >= actors.length}
                 >
                   <IoIosArrowDropright />
                 </button>
@@ -172,10 +168,9 @@ const MovieInfo = () => {
                   </div>
                 ))}
               </div>
-              {/* Similar Movies Section */}
-              <div>
-                <Similars />
-              </div>
+            </div>
+            <div>
+              <Similars />
             </div>
           </div>
         </div>

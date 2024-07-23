@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FaHome, FaStream, FaSearch } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdOutlineDataSaverOn } from "react-icons/md";
+import { fetchMovies } from "../../api/searchMovie";
 
 export const items = [
   { id: "28", name: "Action", href: "/genre/28" },
@@ -21,12 +22,53 @@ export const items = [
 ];
 
 const Header = () => {
+  const [query, setQuery] = useState("");
+  const [matchMovie, setMatchMovie] = useState([]);
+  const [showMovie, setShowMovie] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const debounceFetchMovies = setTimeout(() => {
+      const getMovies = async () => {
+        if (query) {
+          const movies = await fetchMovies(query);
+          setMatchMovie(movies);
+          setShowMovie(true);
+        } else {
+          setMatchMovie([]);
+          setShowMovie(false);
+        }
+      };
+      getMovies();
+    }, 200);
+
+    return () => clearTimeout(debounceFetchMovies);
+  }, [query]);
+
+  const handleChange = (e) => {
+    setQuery(e.target.value);
+  };
+
+  const handleClick = (movie) => {
+    setQuery("");
+    setMatchMovie([]);
+    setShowMovie(false);
+    navigate(`/movie/${movie.id}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && query) {
+      navigate(`/search/${query}`);
+      setShowMovie(false);
+    }
+  };
+
   return (
     <header className="bg-zinc-900 text-white font-lato">
-      <div className="container mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center font-lato">
+      <div className="container mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center">
         <div className="flex items-center gap-5 mb-4 lg:mb-0 w-full lg:w-auto">
           <img
-            src={`https://asset.brandfetch.io/idjAvp-xz4/idbJNPrPxh.png`}
+            src="https://asset.brandfetch.io/idjAvp-xz4/idbJNPrPxh.png"
             alt="Plex"
             className="w-24 md:w-32 lg:w-40"
           />
@@ -34,9 +76,36 @@ const Header = () => {
             <input
               type="text"
               placeholder="Search"
+              value={query}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
               className="bg-zinc-800 text-white w-full lg:w-80 xl:w-96 rounded-full pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
             <FaSearch className="absolute right-4 top-3 text-gray-400" />
+            {showMovie && (
+              <ul className="absolute z-10 mt-1 w-full bg-zinc-800 text-white rounded-b-xl rounded-t-md shadow-lg">
+                {matchMovie.length > 0 ? (
+                  matchMovie.slice(0, 10).map((item) => (
+                    <li
+                      key={item.id}
+                      onClick={() => handleClick(item)}
+                      className="hover:bg-zinc-700"
+                    >
+                      <Link
+                        to={`/movie/${item.id}`}
+                        className="block px-4 py-2"
+                      >
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))
+                ) : (
+                  <li className="px-4 py-2 text-gray-500">
+                    No movies found for "{query}".
+                  </li>
+                )}
+              </ul>
+            )}
           </form>
         </div>
         <ul className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-center font-mono mb-4 lg:mb-0 w-full lg:w-auto">
@@ -52,7 +121,7 @@ const Header = () => {
             <button className="flex items-center text-xl hover:text-yellow-500">
               <FaStream className="mr-2" /> Films
             </button>
-            <ul className="absolute top-6 z-20 mt-2 bg-zinc-800 font-lato text-white rounded-sm shadow-lg hidden group-hover:block">
+            <ul className="absolute top-6 z-20 mt-2 font-lato bg-zinc-800 text-white rounded-sm shadow-lg hidden group-hover:block">
               {items.map((item) => (
                 <li key={item.id} className="hover:bg-zinc-700">
                   <Link to={item.href} className="flex items-start px-8 py-2.5">
@@ -72,18 +141,16 @@ const Header = () => {
             </Link>
           </li>
         </ul>
-        <div className="flex justify-center items-center gap-3 w-full lg:w-auto">
-          <div className="flex items-center gap-3">
-            <Link to="/login" className="text-white border-r-2 pr-3">
-              Login
-            </Link>
-            <Link
-              to="/sign-in"
-              className="text-white bg-yellow-500 py-2 px-4 rounded-full"
-            >
-              Sign In
-            </Link>
-          </div>
+        <div className="flex justify-center items-center gap-3  w-full lg:w-auto">
+          <Link to="/login" className="text-white border-r-2 pr-3">
+            Login
+          </Link>
+          <Link
+            to="/sign-in"
+            className="text-white bg-yellow-500 py-2 px-4 rounded-full"
+          >
+            Sign In
+          </Link>
         </div>
       </div>
     </header>

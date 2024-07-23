@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <h5 className="text-yellow-500 font-bold mb-4">Company</h5>
-            <ul className="space-y-2">
+            <ul>
               <li>
                 <Link to="/about" className="hover:text-yellow-500">
                   About

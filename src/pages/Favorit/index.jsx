@@ -20,9 +20,12 @@ const Favorit = () => {
           There are no favorite films yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {cartItems.map((item) => (
-            <div key={item.id} className="relative rounded-2xl group">
+            <div
+              key={item.id}
+              className="max-w-[320px] relative rounded-2xl group"
+            >
               <img
                 src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${item.poster_path}`}
                 alt={item.title}

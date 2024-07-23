@@ -1,13 +1,16 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
 import Genre from "./pages/Genre";
 import Home from "./pages/Home";
 import MovieInfo from "./pages/MovieInfo";
 import SignIn from "./pages/SignIn";
 import Login from "./pages/Login";
 import Favorit from "./pages/Favorit";
+import SearchResults from "./components/SearchResults";
 
 const App = () => {
+  const { query } = useParams();
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -16,6 +19,7 @@ const App = () => {
       <Route path="/favorit" element={<Favorit />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/search/:query" element={<SearchResults />} />
     </Routes>
   );
 };

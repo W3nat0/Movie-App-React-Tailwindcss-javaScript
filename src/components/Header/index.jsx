@@ -72,11 +72,13 @@ const Header = () => {
     <header className="bg-zinc-900 text-white font-lato">
       <div className="container mx-auto px-4 py-4 flex flex-col lg:flex-row justify-between items-center">
         <div className="flex items-center gap-5 mb-4 lg:mb-0 w-full lg:w-auto">
-          <img
-            src="https://asset.brandfetch.io/idjAvp-xz4/idbJNPrPxh.png"
-            alt="Plex"
-            className="w-24 md:w-32 lg:w-40"
-          />
+          <Link to="/">
+            <img
+              src="https://asset.brandfetch.io/idjAvp-xz4/idbJNPrPxh.png"
+              alt="Plex"
+              className="w-24 md:w-32 lg:w-40"
+            />
+          </Link>
           <form
             onSubmit={handleSubmit}
             className="relative flex-grow lg:flex-grow-0"

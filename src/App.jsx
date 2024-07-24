@@ -6,7 +6,7 @@ import Home from "./pages/Home";
 import MovieInfo from "./pages/MovieInfo";
 import SignIn from "./pages/SignIn";
 import Login from "./pages/Login";
-import Favorit from "./pages/Favorit";
+import Favorit from "./pages/Favorite";
 // components
 import SearchResults from "./components/SearchResults";
 

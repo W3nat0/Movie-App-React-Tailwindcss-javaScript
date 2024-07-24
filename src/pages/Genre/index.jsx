@@ -7,7 +7,10 @@ import { FaStar, FaRegBookmark } from "react-icons/fa";
 import { IoIosArrowForward } from "react-icons/io";
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { getCartItems, addCart } from "../../provider/store/cartSlice";
+import {
+  addFavorite,
+  getFavoriteItems,
+} from "../../provider/store/favoriteSlice";
 // components
 import Loader from "../../components/Loader";
 import { items as genreItems } from "../../components/Header";
@@ -22,7 +25,7 @@ const Genre = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [paginationLoading, setPaginationLoading] = useState(false);
 
-  const cartItems = useSelector(getCartItems);
+  const favoriteItems = useSelector(getFavoriteItems);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -60,18 +63,17 @@ const Genre = () => {
       setPaginationLoading(true);
       const newPage = direction === "next" ? currentPage + 1 : currentPage - 1;
       setCurrentPage(newPage);
-      window.scrollTo(0, 0);
     }
   };
 
-  const isInCart = (item) =>
-    cartItems.find((cartItem) => cartItem.id === item.id);
+  const isInFavorite = (item) =>
+    favoriteItems.find((favoriteItem) => favoriteItem.id === item.id);
 
-  const handleToggleCart = (item) => {
-    if (isInCart(item)) {
+  const handleToggleFavorite = (item) => {
+    if (isInFavorite(item)) {
       navigate("/favorit");
     } else {
-      dispatch(addCart(item));
+      dispatch(addFavorite(item));
     }
   };
 
@@ -89,27 +91,21 @@ const Genre = () => {
             key={movie.id}
             className="max-w-[320px] relative rounded-2xl group"
           >
-            {movie.poster_path ? (
-              <img
-                src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
-                alt={movie.title}
-                className="w-full h-auto object-cover rounded-xl"
-              />
-            ) : (
-              <div className="w-full h-auto bg-gray-700 rounded-xl flex items-center justify-center">
-                <p>No Image</p>
-              </div>
-            )}
+            <img
+              src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
+              alt={movie.title}
+              className="w-full h-auto object-cover rounded-xl"
+            />
             <div className="absolute rounded-xl inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
               <div className="flex justify-between w-full">
                 <div className="flex items-center gap-2">
                   <FaStar className="text-yellow-500" />
                   {movie.vote_average.toFixed(1)}
                 </div>
-                <button onClick={() => handleToggleCart(movie)}>
+                <button onClick={() => handleToggleFavorite(movie)}>
                   <FaRegBookmark
                     className={`cursor-pointer text-2xl ${
-                      isInCart(movie) ? "text-yellow-500 " : "text-white"
+                      isInFavorite(movie) ? "text-yellow-500 " : "text-white"
                     }`}
                   />
                 </button>

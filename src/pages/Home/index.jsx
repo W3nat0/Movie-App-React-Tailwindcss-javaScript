@@ -11,7 +11,10 @@ import {
 import { getData } from "../../api/movies";
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { getCartItems, addCart } from "../../provider/store/cartSlice";
+import {
+  addFavorite,
+  getFavoriteItems,
+} from "../../provider/store/favoriteSlice";
 // components
 import Loader from "../../components/Loader";
 
@@ -29,7 +32,7 @@ const Home = () => {
     upComing: { start: 0, end: 5 },
   });
 
-  const cartItems = useSelector(getCartItems);
+  const favoriteItems = useSelector(getFavoriteItems);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -64,14 +67,14 @@ const Home = () => {
     fetchData();
   }, [fetchData]);
 
-  const isInCart = (item) =>
-    cartItems.find((cartItem) => cartItem.id === item.id);
+  const isInFavorite = (item) =>
+    favoriteItems.find((favoriteItem) => favoriteItem.id === item.id);
 
-  const handleToggleCart = (item) => {
-    if (isInCart(item)) {
+  const handleToggleFavorite = (item) => {
+    if (isInFavorite(item)) {
       navigate("/favorit");
     } else {
-      dispatch(addCart(item));
+      dispatch(addFavorite(item));
     }
   };
 
@@ -85,27 +88,21 @@ const Home = () => {
             key={item.id}
             className="relative rounded-2xl flex-1 max-w-[320px] group"
           >
-            {item.poster_path ? (
-              <img
-                src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${item.poster_path}`}
-                alt={item.title}
-                className="w-full h-auto object-cover rounded-xl"
-              />
-            ) : (
-              <div className="w-full h-auto bg-gray-700 rounded-xl flex items-center justify-center">
-                <p>No Image</p>
-              </div>
-            )}
+            <img
+              src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${item.poster_path}`}
+              alt={item.title}
+              className="w-full h-auto object-cover rounded-xl"
+            />
             <div className="absolute rounded-xl inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
               <div className="flex justify-between w-full">
                 <div className="flex items-center gap-2">
                   <FaStar className="text-yellow-500" />
                   {item.vote_average.toFixed(1)}
                 </div>
-                <button onClick={() => handleToggleCart(item)}>
+                <button onClick={() => handleToggleFavorite(item)}>
                   <FaRegBookmark
                     className={`cursor-pointer text-2xl ${
-                      isInCart(item) ? "text-yellow-500 " : "text-white"
+                      isInFavorite(item) ? "text-yellow-500 " : "text-white"
                     }`}
                   />
                 </button>

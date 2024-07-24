@@ -8,25 +8,28 @@ import Loader from "../Loader";
 import { FaStar, FaRegBookmark } from "react-icons/fa";
 // redux
 import { useDispatch, useSelector } from "react-redux";
-import { addCart, getCartItems } from "../../provider/store/cartSlice";
+import {
+  addFavorite,
+  getFavoriteItems,
+} from "../../provider/store/favoriteSlice";
 
 const SearchResults = () => {
   const { query } = useParams();
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const cartItems = useSelector(getCartItems);
+  const favoriteItems = useSelector(getFavoriteItems);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const isInCart = (item) =>
-    cartItems.find((cartItem) => cartItem.id === item.id);
+  const isInFavorite = (item) =>
+    favoriteItems.find((favoriteItem) => favoriteItem.id === item.id);
 
-  const handleToggleCart = (item) => {
-    if (isInCart(item)) {
+  const handleToggleFavorite = (item) => {
+    if (isInFavorite(item)) {
       navigate("/favorit");
     } else {
-      dispatch(addCart(item));
+      dispatch(addFavorite(item));
     }
   };
 
@@ -77,10 +80,10 @@ const SearchResults = () => {
                     <FaStar className="text-yellow-500" />
                     {movie.vote_average.toFixed(1)}
                   </div>
-                  <button onClick={() => handleToggleCart(movie)}>
+                  <button onClick={() => handleToggleFavorite(movie)}>
                     <FaRegBookmark
                       className={`cursor-pointer text-2xl ${
-                        isInCart(movie) ? "text-yellow-500" : "text-white"
+                        isInFavorite(movie) ? "text-yellow-500" : "text-white"
                       }`}
                     />
                   </button>

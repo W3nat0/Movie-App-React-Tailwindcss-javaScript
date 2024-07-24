@@ -58,9 +58,12 @@ const Header = () => {
     navigate(`/movie/${movie.id}`);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter" && query) {
-      navigate(`/search/${query}`);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const trimmedQuery = query.trim();
+    if (trimmedQuery) {
+      navigate(`/search/${trimmedQuery}`);
+      setQuery("");
       setShowMovie(false);
     }
   };
@@ -74,13 +77,15 @@ const Header = () => {
             alt="Plex"
             className="w-24 md:w-32 lg:w-40"
           />
-          <form className="relative flex-grow lg:flex-grow-0">
+          <form
+            onSubmit={handleSubmit}
+            className="relative flex-grow lg:flex-grow-0"
+          >
             <input
               type="text"
               placeholder="Search"
               value={query}
               onChange={handleChange}
-              onKeyDown={handleKeyDown}
               className="bg-zinc-800 text-white w-full lg:w-80 xl:w-96 rounded-full pl-8 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
             <FaSearch className="absolute right-4 top-3 text-gray-400" />

@@ -172,7 +172,7 @@ const MovieInfo = () => {
                           className="w-24 h-24 rounded-full object-cover mb-2"
                         />
                       ) : (
-                        <div className="w-1/2 h-full bg-gray-700 rounded-full flex items-center justify-center">
+                        <div className="w-1/2 h-[100px] bg-gray-700 rounded-full flex items-center justify-center">
                           <p>No Image</p>
                         </div>
                       )}

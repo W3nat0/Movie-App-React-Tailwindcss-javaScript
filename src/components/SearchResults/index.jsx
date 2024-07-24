@@ -104,7 +104,9 @@ const SearchResults = () => {
           ))}
         </div>
       ) : (
-        <p>No movies found for "{query}".</p>
+        <div className="min-h-screen flex justify-center">
+          <h1 className="text-4xl">No movies found for "{query}".</h1>
+        </div>
       )}
     </div>
   );

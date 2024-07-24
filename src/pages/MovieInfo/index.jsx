@@ -101,8 +101,8 @@ const MovieInfo = () => {
           {movie.poster_path ? (
             <img
               src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
-              alt={movie.title}
-              className="w-full h-auto object-cover rounded-xl"
+              alt={movie.name}
+              className="w-full h-[850px] lg:w-1/3 rounded-lg"
             />
           ) : (
             <div className="w-full h-auto bg-gray-700 rounded-xl flex items-center justify-center">
@@ -146,38 +146,47 @@ const MovieInfo = () => {
                 </div>
               )}
             </div>
-
-            <div className="mt-12">
-              <div className="flex items-center relative justify-between">
-                <button
-                  onClick={() => handleNavigation("left")}
-                  className="text-2xl p-2 cursor-pointer absolute top-10 left-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
-                >
-                  <IoIosArrowDropleft />
-                </button>
-                <button
-                  onClick={() => handleNavigation("right")}
-                  className="text-2xl p-2 cursor-pointer absolute top-10 right-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
-                >
-                  <IoIosArrowDropright />
-                </button>
+            {displayedActors.length > 0 ? (
+              <div className="mt-12">
+                <div className="flex items-center relative justify-between">
+                  <button
+                    onClick={() => handleNavigation("left")}
+                    className="text-2xl p-2 cursor-pointer absolute top-10 left-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
+                  >
+                    <IoIosArrowDropleft />
+                  </button>
+                  <button
+                    onClick={() => handleNavigation("right")}
+                    className="text-2xl p-2 cursor-pointer absolute top-10 right-0 rounded-full bg-gray-700 text-white hover:bg-gray-600"
+                  >
+                    <IoIosArrowDropright />
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+                  {displayedActors.map((actor) => (
+                    <div key={actor.id} className="flex flex-col items-center">
+                      {actor.profile_path ? (
+                        <img
+                          src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${actor.profile_path}`}
+                          alt={actor.name}
+                          className="w-24 h-24 rounded-full object-cover mb-2"
+                        />
+                      ) : (
+                        <div className="w-1/2 h-full bg-gray-700 rounded-full flex items-center justify-center">
+                          <p>No Image</p>
+                        </div>
+                      )}
+                      <p className="text-center text-lg font-semibold">
+                        {actor.name}
+                      </p>
+                      <p className="text-center">{actor.character}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-                {displayedActors.map((actor) => (
-                  <div key={actor.id} className="flex flex-col items-center">
-                    <img
-                      src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${actor.profile_path}`}
-                      alt={actor.name}
-                      className="w-24 h-24 rounded-full object-cover mb-2"
-                    />
-                    <p className="text-center text-lg font-semibold">
-                      {actor.name}
-                    </p>
-                    <p className="text-center">{actor.character}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ) : (
+              <p className="text-center text-lg font-semibold">No Cast</p>
+            )}
             <div>
               <Similars />
             </div>

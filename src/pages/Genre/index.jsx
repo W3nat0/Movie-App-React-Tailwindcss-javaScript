@@ -60,6 +60,7 @@ const Genre = () => {
       setPaginationLoading(true);
       const newPage = direction === "next" ? currentPage + 1 : currentPage - 1;
       setCurrentPage(newPage);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -88,11 +89,17 @@ const Genre = () => {
             key={movie.id}
             className="max-w-[320px] relative rounded-2xl group"
           >
-            <img
-              src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
-              alt={movie.title}
-              className="w-full h-auto object-cover rounded-xl"
-            />
+            {movie.poster_path ? (
+              <img
+                src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
+                alt={movie.title}
+                className="w-full h-auto object-cover rounded-xl"
+              />
+            ) : (
+              <div className="w-full h-auto bg-gray-700 rounded-xl flex items-center justify-center">
+                <p>No Image</p>
+              </div>
+            )}
             <div className="absolute rounded-xl inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-between p-4">
               <div className="flex justify-between w-full">
                 <div className="flex items-center gap-2">

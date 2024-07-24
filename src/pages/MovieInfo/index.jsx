@@ -98,11 +98,17 @@ const MovieInfo = () => {
     <div className="bg-zinc-900 text-white p-8 min-h-screen">
       <div className="container mx-auto">
         <div className="flex flex-col lg:flex-row gap-14">
-          <img
-            src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
-            alt={movie.title}
-            className="w-full h-[850px] lg:w-1/3 rounded-lg"
-          />
+          {movie.poster_path ? (
+            <img
+              src={`${process.env.REACT_APP_MOVIE_IMG_URL}/${movie.poster_path}`}
+              alt={movie.title}
+              className="w-full h-auto object-cover rounded-xl"
+            />
+          ) : (
+            <div className="w-full h-auto bg-gray-700 rounded-xl flex items-center justify-center">
+              <p>No Image</p>
+            </div>
+          )}
           <div className="flex flex-col gap-10 lg:w-3/5">
             <h1 className="text-4xl font-bold">{movie.title}</h1>
             <p className="text-lg">{movie.overview}</p>

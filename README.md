@@ -1,6 +1,6 @@
 ## Show Project
 
-To see the project in action, you can view it here: [Your Project URL](http://your-project-url.com)
+To see the project in action, you can view it [here:](https://github.com/W3nat0/Movie-App-React-Tailwindcss-javaScript.git)
 
 ## Running the Project
 

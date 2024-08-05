@@ -42,7 +42,7 @@ const Header = () => {
         }
       };
       getMovies();
-    }, 200);
+    }, 300);
 
     return () => clearTimeout(debounceFetchMovies);
   }, [query]);
@@ -66,6 +66,7 @@ const Header = () => {
       setQuery("");
       setShowMovie(false);
     }
+    setShowMovie(false);
   };
 
   return (
